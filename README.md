@@ -33,7 +33,7 @@
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/healthsafe-plus.git
+git clone https://github.com/YeswanthRam28/healthsafe-plus.git
 cd healthsafe-plus
 ```
 
@@ -131,5 +131,4 @@ Health workers, schools, NGOs, and small communities needing a simple way to mon
 
 For support or suggestions:
 
-📧 your.email@example.com  
-🌐 [yourwebsite.com](https://yourwebsite.com)
+📧 yeswanthram.2007@gmail.com  
