@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vaccination Data Visualization</title>
+  <link rel="icon" type="image/x-icon" href="https://cdn-icons-png.flaticon.com/512/448/448945.png">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f4f8;
+      padding: 40px;
+      color: #333;
+    }
+
+    h2 {
+      text-align: center;
+      color: #2d7dd2;
+      margin-bottom: 20px;
+    }
+
+    .stat-cards {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      text-align: center;
+      min-width: 150px;
+    }
+
+    .stat-card h3 {
+      margin: 0;
+      font-size: 1.2rem;
+      color: #666;
+    }
+
+    .stat-card p {
+      font-size: 1.8rem;
+      margin: 5px 0 0;
+      font-weight: bold;
+      color: #2d7dd2;
+    }
+
+    .chart-container {
+      width: 90%;
+      max-width: 800px;
+      margin: 0 auto 50px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      padding: 30px;
+    }
+
+    /* Notification panel */
+    #notifications {
+      display: none;
+      max-width: 700px;
+      margin: 20px auto;
+      background: #fff6e5;
+      border: 1px solid #ffd580;
+      border-left: 5px solid #ffb400;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    #notifications h3 {
+      margin-top: 0;
+      color: #b97700;
+    }
+
+    #notificationList {
+      padding-left: 20px;
+      margin: 10px 0 0;
+    }
+
+    #notificationList li {
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+<body>
+  <h2>📊 Vaccination Data Overview</h2>
+
+  <!-- Stat Cards -->
+  <div class="stat-cards">
+    <div class="stat-card">
+      <h3>Total Vaccinated</h3>
+      <p id="totalVaccinated">0</p>
+    </div>
+    <div class="stat-card">
+      <h3>% Fully Vaccinated</h3>
+      <p id="fullyVaccinated">0%</p>
+    </div>
+    <div class="stat-card">
+      <h3>High-Risk Areas</h3>
+      <p id="highRiskAreas">0</p>
+    </div>
+    <div class="stat-card">
+      <h3>Total Doses (All India)</h3>
+      <p id="officialDoses">Loading...</p>
+    </div>
+  </div>
+
+  <!-- ✅ Notifications Panel -->
+  <div id="notifications">
+    <h3>🔔 Vaccination Reminders</h3>
+    <ul id="notificationList"></ul>
+  </div>
+
+  <!-- Charts -->
+  <div class="chart-container">
+    <canvas id="vaccineChart"></canvas>
+  </div>
+
+  <div class="chart-container">
+    <canvas id="doseChart"></canvas>
+  </div>
+
+  <div class="card" style="margin-top: 30px; padding: 20px; background: #f9f9f9; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.05); max-width: 500px; margin-left: auto; margin-right: auto;">
+  <h3 style="margin-bottom: 15px; font-size: 20px;">📲 Vaccination SMS Reminder</h3>
+  <form id="reminderForm" style="display: flex; flex-direction: column; gap: 12px;">
+    <input type="text" id="reminderName" placeholder="Your Name" required style="padding: 10px; border: 1px solid #ccc; border-radius: 8px;" />
+    <input type="date" id="reminderDate" required style="padding: 10px; border: 1px solid #ccc; border-radius: 8px;" />
+    <input type="tel" id="reminderPhone" placeholder="Phone (+91...)" required style="padding: 10px; border: 1px solid #ccc; border-radius: 8px;" />
+    <button type="submit" style="padding: 10px 15px; border: none; background-color: #4CAF50; color: white; border-radius: 8px; cursor: pointer;">Send Reminder</button>
+  </form>
+  <p id="reminderStatus" style="margin-top: 12px; font-weight: bold;"></p>
+</div>
+
+
+
+  <script>
+    let vaccineChart, doseChart;
+
+    async function loadSummary() {
+      try {
+        const res = await fetch('http://localhost:3000/summary');
+        const data = await res.json();
+        updateStatCards(data);
+        updateCharts(data.vaccineSummary, data.doseSummary);
+      } catch (err) {
+        console.error('Failed to load summary:', err);
+        alert('⚠️ Error loading data. Please make sure your backend is running.');
+      }
+    }
+
+    function updateStatCards(data) {
+      const totalVaccinated = Object.values(data.vaccineSummary).reduce((a, b) => a + b, 0);
+      const fullyVaccinated = (data.doseSummary['2'] || 0);
+      const percentFully = totalVaccinated > 0 ? ((fullyVaccinated / totalVaccinated) * 100).toFixed(1) : 0;
+
+      let highRiskCount = 0;
+      if (data.areaDoseSummary) {
+        for (const area in data.areaDoseSummary) {
+          const doses = data.areaDoseSummary[area];
+          const totalArea = Object.values(doses).reduce((a, b) => a + b, 0);
+          const fullyArea = doses['2'] || 0;
+          if (totalArea > 0 && (fullyArea / totalArea) < 0.7) {
+            highRiskCount++;
+          }
+        }
+      }
+
+      document.getElementById('totalVaccinated').textContent = totalVaccinated;
+      document.getElementById('fullyVaccinated').textContent = percentFully + '%';
+      document.getElementById('highRiskAreas').textContent = highRiskCount;
+    }
+
+    function updateCharts(vaccineSummary, doseSummary) {
+      const ctx1 = document.getElementById('vaccineChart');
+      const ctx2 = document.getElementById('doseChart');
+
+      const vaccineColors = {
+        Covishield: '#f39c12',
+        Covaxin: '#27ae60',
+        Pfizer: '#2980b9',
+        Moderna: '#8e44ad',
+        'Sputnik V': '#e74c3c',
+        Other: '#95a5a6'
+      };
+
+      const vaccineLabels = Object.keys(vaccineSummary);
+      const vaccineCounts = Object.values(vaccineSummary);
+      const vaccineColorSet = vaccineLabels.map(label => vaccineColors[label] || '#999');
+
+      const doseLabels = Object.keys(doseSummary).map(d => `Dose ${d}`);
+      const doseCounts = Object.values(doseSummary);
+      const doseColors = ['#3498db', '#2ecc71', '#9b59b6', '#e67e22'];
+
+      if (vaccineChart) vaccineChart.destroy();
+      if (doseChart) doseChart.destroy();
+
+      vaccineChart = new Chart(ctx1, {
+        type: 'bar',
+        data: {
+          labels: vaccineLabels,
+          datasets: [{
+            label: 'Vaccine Type Count',
+            data: vaccineCounts,
+            backgroundColor: vaccineColorSet,
+            borderRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Types of Vaccines Administered',
+              font: { size: 20 }
+            },
+            legend: { display: false }
+          }
+        }
+      });
+
+      doseChart = new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+          labels: doseLabels,
+          datasets: [{
+            label: 'Dose Count',
+            data: doseCounts,
+            backgroundColor: doseColors
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Dose Distribution Among Citizens',
+              font: { size: 20 }
+            }
+          }
+        }
+      });
+    }
+
+    async function loadOfficialVaccineStats() {
+      try {
+        const res = await fetch('http://localhost:3000/official-vaccine-stats');
+        const data = await res.json();
+        if (data.totalDoses !== undefined) {
+          document.getElementById('officialDoses').textContent = data.totalDoses.toLocaleString();
+        } else {
+          document.getElementById('officialDoses').textContent = 'Error';
+        }
+      } catch (err) {
+        document.getElementById('officialDoses').textContent = 'Error';
+      }
+    }
+
+    async function loadNotifications() {
+      try {
+        const res = await fetch('http://localhost:3000/reminders');
+        const reminders = await res.json();
+        const today = new Date().toISOString().split('T')[0];
+
+        const dueReminders = reminders.filter(r => r.dueDate <= today);
+
+        const container = document.getElementById('notifications');
+        const list = document.getElementById('notificationList');
+        list.innerHTML = '';
+
+        if (dueReminders.length > 0) {
+          dueReminders.forEach(r => {
+            const li = document.createElement('li');
+            li.textContent = `${r.name} is due for vaccination on ${r.dueDate}`;
+            list.appendChild(li);
+          });
+          container.style.display = 'block';
+        } else {
+          container.style.display = 'none';
+        }
+      } catch (err) {
+        console.error('Failed to load reminders:', err);
+      }
+    }
+
+    // Initial load
+    loadSummary();
+    loadOfficialVaccineStats();
+    loadNotifications();
+
+    // Auto-refresh official stats every 10 minutes
+    setInterval(() => {
+      console.log("🔄 Refreshing official vaccination stats...");
+      loadOfficialVaccineStats();
+    }, 10 * 60 * 1000);
+  </script>
+</body>
+</html>

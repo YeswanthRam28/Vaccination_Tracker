@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to HealthSafe+ Vaccination Portal</title>
+  <link rel="icon" type="image/x-icon" href=" https://cdn-icons-png.flaticon.com/512/448/448945.png">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      height: 100vh;
+      background: linear-gradient(270deg, #fbc2eb, #a6c1ee);
+      background-size: 400% 400%;
+      animation: gradientShift 12s ease infinite;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    @keyframes gradientShift {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+
+    .container {
+      text-align: center;
+      color: white;
+      animation: fadeIn 2s ease;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+    }
+
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+    }
+
+    .enter-btn {
+      padding: 15px 30px;
+      font-size: 18px;
+      background-color: #FFA500;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+      transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+
+    .enter-btn:hover {
+      transform: scale(1.05);
+      background-color: #e69500;
+    }
+
+    .syringe-emoji {
+      font-size: 2rem;
+      animation: bounce 2s infinite;
+      margin-bottom: 10px;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(20px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    @keyframes bounce {
+      0%, 100% {transform: translateY(0);}
+      50% {transform: translateY(-10px);}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="syringe-emoji">💉</div>
+    <h1>Welcome to HealthSafe+</h1>
+    <p>Your trusted community vaccination tracking portal.</p>
+    <button class="enter-btn" onclick="goToForm()">Get Started</button>
+  </div>
+
+  <script>
+    function goToForm() {
+      document.body.style.transition = 'opacity 1s';
+      document.body.style.opacity = '0';
+      setTimeout(() => {
+        window.location.href = 'index.html'; // Change to your actual form page name
+      }, 1000);
+    }
+  </script>
+</body>
+</html>
