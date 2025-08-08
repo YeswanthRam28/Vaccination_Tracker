@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Health Record Form</title>
+  <link rel="icon" type="image/x-icon" href=" https://cdn-icons-png.flaticon.com/512/448/448945.png">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(270deg, #74ebd5, #acb6e5, #fbc2eb, #a6c1ee);
+      background-size: 800% 800%;
+      animation: gradientBG 15s ease infinite;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: start;
+      min-height: 100vh;
+      padding: 40px 20px;
+      cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24'><text y='20' font-size='20'>💉</text></svg>") 0 0, auto;
+    }
+    @keyframes gradientBG {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+    .container {
+      background-color: #fff;
+      padding: 30px 40px;
+      border-radius: 16px;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+      max-width: 500px;
+      width: 100%;
+      animation: slideIn 1s ease-out;
+    }
+    @keyframes slideIn {
+      0% {opacity: 0; transform: translateY(50px);}
+      100% {opacity: 1; transform: translateY(0);}
+    }
+    h2 {
+      text-align: center;
+      background-color: #FFA500;
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 25px;
+      font-size: 24px;
+      position: relative;
+    }
+    h2::after {
+      content: "💉";
+      position: absolute;
+      right: 20px;
+      top: 12px;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+    label {
+      font-weight: 600;
+      margin-bottom: 5px;
+      display: block;
+      color: #333;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 15px;
+      transition: 0.3s;
+    }
+    input:focus, select:focus {
+      border-color: #FFA500;
+      box-shadow: 0 0 8px rgba(255, 165, 0, 0.5);
+      outline: none;
+    }
+    .info-icon {
+      font-size: 14px;
+      color: #888;
+      margin-left: 6px;
+      cursor: help;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(to right, #FFA500, #FF8C00);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+    button:hover {
+      transform: scale(1.05);
+    }
+    .quote-banner {
+      color: #fff;
+      font-size: 20px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px #000;
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+    .vaccine-info {
+      color: #222;
+      font-size: 15px;
+      text-align: center;
+      margin-top: 25px;
+      padding: 10px 20px;
+      background: #fff8e1;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 500px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="quote-banner">“Vaccines Save Lives. Protect Yourself and Others.”</div>
+
+  <div class="container">
+    <h2>Health Record Form</h2>
+    <form id="recordForm">
+      <label for="name">Name</label>
+      <input type="text" id="name" required>
+
+      <label for="gender">Gender</label>
+      <select id="gender" required>
+        <option value="">-- Select Gender --</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <label for="aadhar">Aadhar</label>
+      <input type="number" id="aadhar" required>
+
+      <label for="age">Age</label>
+      <input type="number" id="age" required>
+
+      <label for="date">Date</label>
+      <input type="date" id="date" required>
+
+      <label for="dose">Dose Count 
+        <span class="info-icon" title="Number of doses taken">ℹ️</span>
+      </label>
+      <select id="dose" required>
+        <option value="">-- Select Dose Count --</option>
+        <option value="1">1st Dose</option>
+        <option value="2">2nd Dose</option>
+        <option value="Booster">Booster</option>
+      </select>
+
+      <label for="area">Area</label>
+      <select id="area" required>
+        <option value="">-- Select Area --</option>
+        <option value="North Zone">North Zone</option>
+        <option value="South Zone">South Zone</option>
+        <option value="East Zone">East Zone</option>
+        <option value="West Zone">West Zone</option>
+        <option value="Central Zone">Central Zone</option>
+      </select>
+
+      <label for="vaccine">Vaccine Type 
+        <span class="info-icon" title="Select the vaccine taken">💉</span>
+      </label>
+      <select id="vaccine" required>
+        <option value="">-- Select Vaccine --</option>
+        <option value="Covishield">Covishield</option>
+        <option value="Covaxin">Covaxin</option>
+        <option value="Pfizer">Pfizer</option>
+        <option value="Moderna">Moderna</option>
+        <option value="Sputnik V">Sputnik V</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <button type="submit">Submit</button>
+      <button onclick = "window.open('visual.html','_blank') " style="margin-top: 10px;">Data</button>
+    </form>
+  </div>
+
+  <div class="vaccine-info">
+    💡 <strong>Did you know?</strong> Getting fully vaccinated reduces your risk of severe illness, hospitalization, and long-term complications.
+  </div>
+
+  <script>
+    const form = document.getElementById('recordForm');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const data = {
+        name: document.getElementById('name').value.trim(),
+        gender: document.getElementById('gender').value.trim(),
+        aadhar: document.getElementById('aadhar').value.trim(),
+        age: parseInt(document.getElementById('age').value),
+        date: document.getElementById('date').value,
+        dose: document.getElementById('dose').value.trim(),
+        area: document.getElementById('area').value.trim(),
+        vaccine: document.getElementById('vaccine').value.trim()
+      };
+
+      try {
+        const res = await fetch('http://localhost:3000/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        if (res.ok) {
+          alert('✅ Record submitted successfully!');
+          form.reset();
+        } else {
+          const err = await res.json();
+          alert('❌ Submission failed: ' + err.error);
+        }
+      } catch (error) {
+        alert('⚠️ Could not reach server. Is it running?');
+        console.error(error);
+      }
+    });
+  </script>
+
+  <script>
+  document.getElementById('reminderForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const name = document.getElementById('reminderName').value;
+    const dueDate = document.getElementById('reminderDate').value;
+    const phone = document.getElementById('reminderPhone').value;
+    const status = document.getElementById('reminderStatus');
+
+    try {
+      const response = await fetch('http://localhost:3000/reminders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, dueDate, phone })
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        status.innerText = '✅ Reminder saved and SMS sent!';
+        status.style.color = 'green';
+      } else {
+        status.innerText = '❌ Failed to send SMS: ' + (data.error || '');
+        status.style.color = 'red';
+      }
+    } catch (err) {
+      console.error(err);
+      status.innerText = '⚠️ Error sending request.';
+      status.style.color = 'red';
+    }
+  });
+</script>
+<script src="reminder.js"></script>
+
+</body>
+</html>
